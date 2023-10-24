@@ -1,5 +1,11 @@
 import * as bcrypt from 'bcrypt';
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('users')
 export class User {
@@ -16,6 +22,7 @@ export class User {
   password: string;
 
   @BeforeInsert()
+  @BeforeUpdate()
   hashPassword() {
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync(this.password, salt);

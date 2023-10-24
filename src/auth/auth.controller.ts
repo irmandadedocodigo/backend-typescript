@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Controller,
   Post,
@@ -40,7 +41,11 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
+  async getProfile(@Request() req) {
+    const { user } = req;
+    const { password, ...res } = await this.userService.findUserByEmail(
+      user.username,
+    );
+    return res;
   }
 }
