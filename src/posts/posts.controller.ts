@@ -85,4 +85,15 @@ export class PostsController {
 
     await this.postsService.likePost(post, user);
   }
+
+  @UseGuards(AuthGuard)
+  @Post(':id/dislike')
+  @HttpCode(204)
+  async dislikePost(@Param('id') id: string, @Request() req) {
+    const post = await this.postsService.findById(id);
+
+    const user = await this.usersService.findById(req.user.id);
+
+    await this.postsService.dislikePost(post, user);
+  }
 }

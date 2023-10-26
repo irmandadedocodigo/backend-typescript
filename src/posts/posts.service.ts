@@ -54,4 +54,12 @@ export class PostsService {
 
     return await this.postRepository.save(post);
   }
+
+  async dislikePost(post: Post, user: User) {
+    post.usersLikes = post.usersLikes.filter(
+      (likedUser) => likedUser.id !== user.id,
+    );
+
+    return await this.postRepository.save(post);
+  }
 }
