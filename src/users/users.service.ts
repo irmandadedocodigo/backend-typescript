@@ -7,13 +7,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UsersService {
-  findUserByEmail(email: string) {
-    return this.userRepository.findOne({ where: { email } });
-  }
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
+
+  findUserByEmail(email: string) {
+    return this.userRepository.findOne({ where: { email } });
+  }
+
+  findById(id: string) {
+    return this.userRepository.findOne({ where: { id } });
+  }
 
   create(createUserDto: CreateUserDto) {
     return this.userRepository.insert(
