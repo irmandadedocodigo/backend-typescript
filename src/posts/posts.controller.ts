@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   Request,
+  UnauthorizedException,
+  HttpCode,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -40,13 +42,36 @@ export class PostsController {
     return this.postsService.findById(id);
   }
 
+  @UseGuards(AuthGuard)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postsService.update(id, updatePostDto);
+  async update(
+    @Param('id') id: string,
+    @Request() req,
+    @Body() updatePostDto: UpdatePostDto,
+  ) {
+    const post = await this.postsService.findById(id);
+
+    if (post.user.id !== req.user.sub) {
+      throw new UnauthorizedException(
+        'You are not authorized to update this post',
+      );
+    }
+
+    return await this.postsService.update(post, updatePostDto);
   }
 
+  @UseGuards(AuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.postsService.remove(id);
+  @HttpCode(204)
+  async remove(@Param('id') id: string, @Request() req) {
+    const post = await this.postsService.findById(id);
+
+    if (post.user.id !== req.user.sub) {
+      throw new UnauthorizedException(
+        'You are not authorized to delete this post',
+      );
+    }
+
+    await this.postsService.remove(post);
   }
 }
