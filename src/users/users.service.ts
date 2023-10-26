@@ -12,8 +12,13 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  findUserByEmail(email: string) {
-    return this.userRepository.findOne({ where: { email } });
+  findUserByEmail(email: string, selectPassword: boolean = false) {
+    return this.userRepository.findOne({
+      where: { email },
+      select: {
+        password: selectPassword,
+      },
+    });
   }
 
   findById(id: string) {
@@ -24,6 +29,15 @@ export class UsersService {
     return this.userRepository.insert(
       this.userRepository.create(createUserDto),
     );
+  }
+
+  async findAllUserPostsByUserId(userId: string) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['posts'],
+    });
+
+    return user.posts;
   }
 
   // findAll() {

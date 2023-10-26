@@ -26,7 +26,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('/login')
   async create(@Body() loginDto: LoginDto) {
-    const user = await this.userService.findUserByEmail(loginDto.email);
+    const user = await this.userService.findUserByEmail(loginDto.email, true);
     if (!user) throw new NotFoundException();
 
     if (!bcrypt.compareSync(loginDto.password, user.password))
