@@ -74,4 +74,15 @@ export class PostsController {
 
     await this.postsService.remove(post);
   }
+
+  @UseGuards(AuthGuard)
+  @Post(':id/like')
+  @HttpCode(204)
+  async likePost(@Param('id') id: string, @Request() req) {
+    const post = await this.postsService.findById(id);
+
+    const user = await this.usersService.findById(req.user.id);
+
+    await this.postsService.likePost(post, user);
+  }
 }

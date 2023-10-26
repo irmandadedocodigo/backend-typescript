@@ -28,7 +28,7 @@ export class PostsService {
   async findById(id: string) {
     const post = await this.postRepository.findOne({
       where: { id },
-      relations: ['user'],
+      relations: ['user', 'usersLikes'],
     });
 
     if (!post) {
@@ -47,5 +47,11 @@ export class PostsService {
 
   async remove(post: Post) {
     return await this.postRepository.remove(post);
+  }
+
+  async likePost(post: Post, user: User) {
+    post.usersLikes.push(user);
+
+    return await this.postRepository.save(post);
   }
 }

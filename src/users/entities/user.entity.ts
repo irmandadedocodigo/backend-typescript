@@ -3,6 +3,7 @@ import {
   BeforeInsert,
   Column,
   Entity,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -24,6 +25,9 @@ export class User {
 
   @OneToMany(() => Post, (post) => post.user)
   posts: Post[];
+
+  @ManyToMany(() => Post, (post) => post.usersLikes)
+  likedPosts: Post[];
 
   @BeforeInsert()
   hashPassword() {
