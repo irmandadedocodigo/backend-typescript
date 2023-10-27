@@ -12,12 +12,28 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  findUserByEmail(email: string) {
-    return this.userRepository.findOne({ where: { email } });
+  async findUserByEmail(email: string, selectPassword: boolean = false) {
+    return await this.userRepository.findOne({
+      where: { email },
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        password: selectPassword,
+      },
+    });
   }
 
-  findById(id: string) {
-    return this.userRepository.findOne({ where: { id } });
+  async findById(id: string, selectPassword: boolean = false) {
+    return await this.userRepository.findOne({
+      where: { id },
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        password: selectPassword,
+      },
+    });
   }
 
   create(createUserDto: CreateUserDto) {
@@ -26,19 +42,16 @@ export class UsersService {
     );
   }
 
-  // findAll() {
-  //   return `This action returns all users`;
-  // }
+  async findAllUserPostsByUserId(userId: string) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['posts'],
+    });
 
-  // findOne(id: string) {
-  //   return `This action returns a #${id} user`;
-  // }
+    return user.posts;
+  }
 
-  // update(id: string, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
-
-  // remove(id: string) {
-  //   return `This action removes a #${id} user`;
-  // }
+  async update(user: User) {
+    return this.userRepository.save(user);
+  }
 }
