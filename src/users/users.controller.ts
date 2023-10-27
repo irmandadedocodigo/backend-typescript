@@ -29,6 +29,12 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard)
+  @Get('posts/my')
+  async findMyPosts(@Request() req) {
+    return await this.usersService.findAllUserPostsByUserId(req.user.sub);
+  }
+
+  @UseGuards(AuthGuard)
   @Patch('update/password')
   async updatePassword(
     @Request() req,
