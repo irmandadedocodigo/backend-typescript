@@ -19,8 +19,16 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    const checkEmailUser = await this.usersService.findUserByEmail(
+      createUserDto.email,
+    );
+
+    if (checkEmailUser) {
+      throw new UnprocessableEntityException('Email is already taken');
+    }
+
+    return await this.usersService.create(createUserDto);
   }
 
   @Get(':id/posts')
