@@ -1,19 +1,10 @@
 import * as bcrypt from 'bcrypt';
-import {
-  BeforeInsert,
-  Column,
-  Entity,
-  ManyToMany,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { BeforeInsert, Column, Entity, ManyToMany, OneToMany } from 'typeorm';
 import { Post } from 'src/posts/entities/post.entity';
+import { BaseEntity } from 'src/common/baseEntity';
 
 @Entity('users')
-export class User {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class User extends BaseEntity {
   @Column({ nullable: false })
   fullName: string;
 

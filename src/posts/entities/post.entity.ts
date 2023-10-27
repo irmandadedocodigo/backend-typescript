@@ -1,18 +1,9 @@
-import {
-  Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
+import { BaseEntity } from 'src/common/baseEntity';
 
 @Entity('posts')
-export class Post {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class Post extends BaseEntity {
   @Column({ nullable: false })
   title: string;
 
