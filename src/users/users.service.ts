@@ -12,17 +12,28 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  findUserByEmail(email: string, selectPassword: boolean = false) {
-    return this.userRepository.findOne({
+  async findUserByEmail(email: string, selectPassword: boolean = false) {
+    return await this.userRepository.findOne({
       where: { email },
       select: {
+        id: true,
+        email: true,
+        fullName: true,
         password: selectPassword,
       },
     });
   }
 
-  findById(id: string) {
-    return this.userRepository.findOne({ where: { id } });
+  async findById(id: string, selectPassword: boolean = false) {
+    return await this.userRepository.findOne({
+      where: { id },
+      select: {
+        id: true,
+        email: true,
+        fullName: true,
+        password: selectPassword,
+      },
+    });
   }
 
   create(createUserDto: CreateUserDto) {
@@ -40,19 +51,7 @@ export class UsersService {
     return user.posts;
   }
 
-  // findAll() {
-  //   return `This action returns all users`;
-  // }
-
-  // findOne(id: string) {
-  //   return `This action returns a #${id} user`;
-  // }
-
-  // update(id: string, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
-
-  // remove(id: string) {
-  //   return `This action removes a #${id} user`;
-  // }
+  async update(user: User) {
+    return this.userRepository.save(user);
+  }
 }

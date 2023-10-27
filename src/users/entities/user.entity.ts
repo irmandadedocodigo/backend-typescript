@@ -35,4 +35,8 @@ export class User {
     const hashedPassword = bcrypt.hashSync(this.password, salt);
     this.password = hashedPassword;
   }
+
+  comparePassword(password: string) {
+    return bcrypt.compareSync(password, this.password);
+  }
 }

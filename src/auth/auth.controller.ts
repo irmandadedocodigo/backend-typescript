@@ -12,7 +12,6 @@ import {
 } from '@nestjs/common';
 import { LoginDto } from './dto/login.dto';
 import { UsersService } from 'src/users/users.service';
-import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from './auth.guard';
 
@@ -29,7 +28,7 @@ export class AuthController {
     const user = await this.userService.findUserByEmail(loginDto.email, true);
     if (!user) throw new NotFoundException();
 
-    if (!bcrypt.compareSync(loginDto.password, user.password))
+    if (!user.comparePassword(loginDto.password))
       throw new UnauthorizedException();
 
     const payload = { sub: user.id, username: user.email };
