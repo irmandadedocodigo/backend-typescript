@@ -17,6 +17,7 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { UsersService } from 'src/users/users.service';
 import { IRequestWithUser } from 'src/common/interfaces/request';
+import { IdParamValidation } from 'src/common/validations/idParam.validation';
 
 @Controller('posts')
 export class PostsController {
@@ -43,7 +44,7 @@ export class PostsController {
   }
 
   @Get(':id')
-  findById(@Param('id') id: string) {
+  findById(@Param() { id }: IdParamValidation) {
     return this.postsService.findById(id);
   }
 
@@ -68,7 +69,10 @@ export class PostsController {
   @UseGuards(AuthGuard)
   @Delete(':id')
   @HttpCode(204)
-  async remove(@Param('id') id: string, @Request() req: IRequestWithUser) {
+  async remove(
+    @Param() { id }: IdParamValidation,
+    @Request() req: IRequestWithUser,
+  ) {
     const post = await this.postsService.findById(id);
 
     if (post.user.id !== req.user.sub) {
@@ -83,7 +87,10 @@ export class PostsController {
   @UseGuards(AuthGuard)
   @Post(':id/like')
   @HttpCode(204)
-  async likePost(@Param('id') id: string, @Request() req: IRequestWithUser) {
+  async likePost(
+    @Param() { id }: IdParamValidation,
+    @Request() req: IRequestWithUser,
+  ) {
     const post = await this.postsService.findById(id);
 
     const user = await this.usersService.findById(req.user.sub);
@@ -94,7 +101,10 @@ export class PostsController {
   @UseGuards(AuthGuard)
   @Post(':id/dislike')
   @HttpCode(204)
-  async dislikePost(@Param('id') id: string, @Request() req: IRequestWithUser) {
+  async dislikePost(
+    @Param() { id }: IdParamValidation,
+    @Request() req: IRequestWithUser,
+  ) {
     const post = await this.postsService.findById(id);
 
     const user = await this.usersService.findById(req.user.sub);
