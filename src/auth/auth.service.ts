@@ -1,24 +1,30 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from '../users/dto/create-user.dto';
 // import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { RegisterDto } from './dto/register.dto';
 
 @Injectable()
 export class AuthService {
-  findUserByEmail(email: string) {
-    return this.userRepository.findOne({ where: { email } });
-  }
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
-    return this.userRepository.insert(
-      this.userRepository.create(createUserDto),
-    );
+  register(registerDto: RegisterDto) {
+    return this.userRepository.insert(this.userRepository.create(registerDto));
+  }
+
+  findUserByEmail(email: string) {
+    return this.userRepository.findOne({ where: { email } });
+  }
+
+  findUserToLoginByEmail(email: string) {
+    return this.userRepository.findOne({
+      where: { email },
+      select: ['id', 'password'],
+    });
   }
 
   // findAll() {

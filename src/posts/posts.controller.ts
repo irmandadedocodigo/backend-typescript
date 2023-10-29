@@ -16,6 +16,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { UsersService } from 'src/users/users.service';
+import { IRequestWithUser } from 'src/common/interfaces/request';
 
 @Controller('posts')
 export class PostsController {
@@ -26,8 +27,12 @@ export class PostsController {
 
   @UseGuards(AuthGuard)
   @Post()
-  async create(@Request() req, @Body() createPostDto: CreatePostDto) {
-    const user = await this.usersService.findById(req.user.id);
+  async create(
+    @Request() req: IRequestWithUser,
+    @Body() createPostDto: CreatePostDto,
+  ) {
+    console.log(req.user);
+    const user = await this.usersService.findById(req.user.sub);
 
     return await this.postsService.create(user, createPostDto);
   }
@@ -46,7 +51,7 @@ export class PostsController {
   @Patch(':id')
   async update(
     @Param('id') id: string,
-    @Request() req,
+    @Request() req: IRequestWithUser,
     @Body() updatePostDto: UpdatePostDto,
   ) {
     const post = await this.postsService.findById(id);
@@ -63,7 +68,7 @@ export class PostsController {
   @UseGuards(AuthGuard)
   @Delete(':id')
   @HttpCode(204)
-  async remove(@Param('id') id: string, @Request() req) {
+  async remove(@Param('id') id: string, @Request() req: IRequestWithUser) {
     const post = await this.postsService.findById(id);
 
     if (post.user.id !== req.user.sub) {
@@ -78,10 +83,10 @@ export class PostsController {
   @UseGuards(AuthGuard)
   @Post(':id/like')
   @HttpCode(204)
-  async likePost(@Param('id') id: string, @Request() req) {
+  async likePost(@Param('id') id: string, @Request() req: IRequestWithUser) {
     const post = await this.postsService.findById(id);
 
-    const user = await this.usersService.findById(req.user.id);
+    const user = await this.usersService.findById(req.user.sub);
 
     await this.postsService.likePost(post, user);
   }
@@ -89,10 +94,10 @@ export class PostsController {
   @UseGuards(AuthGuard)
   @Post(':id/dislike')
   @HttpCode(204)
-  async dislikePost(@Param('id') id: string, @Request() req) {
+  async dislikePost(@Param('id') id: string, @Request() req: IRequestWithUser) {
     const post = await this.postsService.findById(id);
 
-    const user = await this.usersService.findById(req.user.id);
+    const user = await this.usersService.findById(req.user.sub);
 
     await this.postsService.dislikePost(post, user);
   }
