@@ -1,5 +1,12 @@
 import * as bcrypt from 'bcrypt';
-import { BeforeInsert, Column, Entity, ManyToMany, OneToMany } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+} from 'typeorm';
 import { Post } from 'src/posts/entities/post.entity';
 import { BaseEntity } from 'src/common/baseEntity';
 
@@ -19,6 +26,13 @@ export class User extends BaseEntity {
 
   @ManyToMany(() => Post, (post) => post.usersLikes)
   likedPosts: Post[];
+
+  @ManyToMany(() => User, (user) => user.following)
+  @JoinTable()
+  followers: User[];
+
+  @ManyToMany(() => User, (user) => user.followers)
+  following: User[];
 
   @BeforeInsert()
   hashPassword() {

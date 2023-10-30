@@ -12,13 +12,14 @@ import { UsersService } from './users.service';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { IRequestWithUser } from 'src/common/interfaces/request';
+import { IdParamValidation } from 'src/common/validations/idParam.validation';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get(':id/posts')
-  findAllUserPostsByUserId(@Param('id') id: string) {
+  findAllUserPostsByUserId(@Param() { id }: IdParamValidation) {
     return this.usersService.findAllUserPostsByUserId(id);
   }
 
@@ -51,5 +52,33 @@ export class UsersController {
     user.hashPassword();
 
     return this.usersService.update(user);
+  }
+
+  @UseGuards(AuthGuard)
+  @Patch('follow/:id')
+  async followUser(
+    @Request() req: IRequestWithUser,
+    @Param() { id }: IdParamValidation,
+  ) {
+    const user = await this.usersService.findById(req.user.sub);
+    const userToFollow = await this.usersService.findById(id);
+
+    await this.usersService.followUser(user, userToFollow);
+
+    return this.usersService.findById(req.user.sub);
+  }
+
+  @UseGuards(AuthGuard)
+  @Patch('unfollow/:id')
+  async unfollowUser(
+    @Request() req: IRequestWithUser,
+    @Param() { id }: IdParamValidation,
+  ) {
+    const user = await this.usersService.findById(req.user.sub);
+    const userToUnfollow = await this.usersService.findById(id);
+
+    await this.usersService.unfollowUser(user, userToUnfollow);
+
+    return this.usersService.findById(req.user.sub);
   }
 }

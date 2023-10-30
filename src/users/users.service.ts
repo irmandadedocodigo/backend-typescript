@@ -19,6 +19,7 @@ export class UsersService {
         fullName: true,
         password: selectPassword,
       },
+      relations: ['followers', 'following'],
     });
   }
 
@@ -33,5 +34,19 @@ export class UsersService {
 
   async update(user: User) {
     return this.userRepository.save(user);
+  }
+
+  async followUser(user: User, userToFollow: User) {
+    user.following.push(userToFollow);
+
+    await this.userRepository.save(user);
+  }
+
+  async unfollowUser(user: User, userToUnfollow: User) {
+    user.following = user.following.filter(
+      (user) => user.id !== userToUnfollow.id,
+    );
+
+    await this.userRepository.save(user);
   }
 }
