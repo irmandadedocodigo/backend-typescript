@@ -32,7 +32,6 @@ export class PostsController {
     @Request() req: IRequestWithUser,
     @Body() createPostDto: CreatePostDto,
   ) {
-    console.log(req.user);
     const user = await this.usersService.findById(req.user.sub);
 
     return await this.postsService.create(user, createPostDto);

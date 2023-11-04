@@ -6,13 +6,11 @@ import { User } from 'src/users/entities/user.entity';
 export class MailService {
   constructor(private mailerService: MailerService) {}
 
-  async sendPasswordResetLink(user: User, token: string) {
-    const url = `example.com/auth/confirm?token=${token}`;
-
+  async sendPasswordResetLink(user: User, url: string) {
     await this.mailerService.sendMail({
       to: user.email,
       subject: 'Password Reset',
-      template: './forgotPassword',
+      template: './forgotPassword.hbs',
       context: {
         url,
       },

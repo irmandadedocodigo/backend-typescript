@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
-// import { UpdateUserDto } from './dto/update-user.dto';
-import { Repository } from 'typeorm';
-import { User } from '../users/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
 import { RegisterDto } from './dto/register.dto';
+import { User } from 'src/users/entities/user.entity';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly mailService: MailService,
   ) {}
 
   register(registerDto: RegisterDto) {
@@ -27,19 +29,7 @@ export class AuthService {
     });
   }
 
-  // findAll() {
-  //   return `This action returns all users`;
-  // }
-
-  // findOne(id: string) {
-  //   return `This action returns a #${id} user`;
-  // }
-
-  // update(id: string, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
-
-  // remove(id: string) {
-  //   return `This action removes a #${id} user`;
-  // }
+  sendPasswordResetLink(user: User, token: string) {
+    return this.mailService.sendPasswordResetLink(user, token);
+  }
 }

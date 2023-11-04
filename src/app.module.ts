@@ -11,6 +11,9 @@ import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
 import { PostsModule } from './posts/posts.module';
 import { Post } from './posts/entities/post.entity';
+import { MailModule } from './mail/mail.module';
+import { TokensModule } from './tokens/tokens.module';
+import { Token } from './tokens/entities/token.entity';
 
 @Module({
   imports: [
@@ -24,12 +27,14 @@ import { Post } from './posts/entities/post.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User, Post],
+      entities: [User, Post, Token],
       synchronize: true,
     }),
     AuthModule,
     UsersModule,
     PostsModule,
+    MailModule,
+    TokensModule,
   ],
   controllers: [AppController],
   providers: [AppService],
